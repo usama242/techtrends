@@ -2,8 +2,7 @@ import sqlite3
 import logging
 import sys 
 import time
-from flask import Flask, jsonify, json, render_template, request, url_for, redirect, flash
-from werkzeug.exceptions import abort
+from flask import Flask, json, render_template, request, url_for, redirect, flash
 
 connection_count = 0
 
@@ -40,7 +39,7 @@ def healthz():
             status=200,
             mimetype='application/json'
     )
-    app.logger.debug(logger_message('Test debug message'))
+    app.logger.debug(logger_message('Retreived health status'))
     return response
 
 @app.route('/metrics')
@@ -69,7 +68,7 @@ def index():
 def post(post_id):
     post = get_post(post_id)
     if post is None:
-      app.logger.debug(logger_message("Non existing post was retrieved."))
+      app.logger.error(logger_message("Non existing post was retrieved."))
       return render_template('404.html'), 404
     else:
       app.logger.debug(logger_message(f"Post \"{post['title']}\" was retrieved."))
@@ -106,8 +105,7 @@ if __name__ == "__main__":
    logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.StreamHandler(sys.stderr)
+        logging.StreamHandler(sys.stdout)
         ]
     )
    app.run(host='0.0.0.0', port='3111')
